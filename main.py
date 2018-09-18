@@ -1,9 +1,13 @@
 from flask import Flask, render_template, request, flash, jsonify
+from flask_bootstrap import Bootstrap
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Items
 
 app = Flask(__name__)
+
+# Making the app bootstrap flavoured
+bootstrap = Bootstrap(app)
 
 engine = create_engine('sqlite:///item_catalog.db')
 Base.metadata.bind = engine
@@ -20,12 +24,12 @@ def Home():
 # Show all items when clicked on the catalog
 @app.route('/category/<string:category_name>')
 def ItemsByCategory(category_name):
-    return render_template('items_by_category.html')
+    return render_template('items_by_category.html', category_name)
 
 # Show a specific item
 @app.route('/category/<string:category_name>/item/<int:item_id>')
 def ItemById(category_name, item_id):
-    return render_template('item_page.html')
+    return render_template('item_page.html', category_name, item_id)
 
 # Login route
 @app.route('/login')
