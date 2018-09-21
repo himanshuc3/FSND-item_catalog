@@ -19,7 +19,7 @@
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball')}}">Basketball</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball')}}">Baseball</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'frisbee')}}">Frisbee</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowbaording')}}">Snowboarding</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowboarding')}}">Snowboarding</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'rock_climbing')}}">Rock Climbing</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'foosball')}}">Foosball</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'skating')}}">Skating</a></li>
@@ -30,9 +30,10 @@
                 <h2 class="catalog_heading">{{ category_name }}</h2>
                 <!-- Fetching data in python and display items here -->
                 <ul>
-                    <li>Item one</li>
-                    <li>Item two</li>
+                {% for item in items %}
+                    <li><a href="{{ url_for('SpecificItem', category_name= category_name, item_name = item.title) }} ">{{item.title}}</a></li>
                 </ul>
+                {% endfor %}
             </div>
     </div>
 {% endblock %}

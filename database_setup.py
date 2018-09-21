@@ -9,7 +9,7 @@ Base = declarative_base()
 class Items(Base):
     __tablename__ = 'items'
 
-    id= Column(Integer, primary_key=True)
+    id = Column(Integer, primary_key=True)
     title = Column(String(64), nullable= False)
     description = Column(String(250), nullable=False)
     category = Column(String(64), nullable=False)

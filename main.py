@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, url_for, flash, redirect, jso
 from flask_bootstrap import Bootstrap
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from database_setup import Base, Items
+from database_setup import Base, Items, User
 from flask_dance.contrib.google import make_google_blueprint, google
 import random,string
 from form import LoginForm, RegistrationForm
@@ -29,9 +29,8 @@ bootstrap = Bootstrap(app)
 
 engine = create_engine('sqlite:///item_catalog.db')
 Base.metadata.bind = engine
-
 DBSession = sessionmaker(bind=engine)
-session = DBSession()
+db_session = DBSession()
 
 # Default home route
 @app.route('/')
@@ -62,12 +61,15 @@ def Login():
 # Show all items when clicked on the catalog
 @app.route('/catalog/<string:category_name>/items')
 def ItemsByCategory(category_name):
-    return render_template('items_by_category.html', category_name=category_name)
+    items_by_category = db_session.query(Items).filter_by(category=category_name).all()
+    return render_template('items_by_category.html', category_name=category_name, items=items_by_category)
 
 # Show a specific item
-@app.route('/catalog/<string:category_name>/<int:item_name>')
-def ItemById(category_name, item_name):
-    return render_template('item_page.html', category_name, item_id)
+@app.route('/catalog/<string:category_name>/<string:item_name>')
+def SpecificItem(category_name, item_name):
+    item = db_session.query(Items).filter_by(title=item_name, category=category_name).first()
+    print(item.title, item.description)
+    return render_template('item_page.html', item = item)
 
 # Adding/Editing item route
 @app.route('/catalog/<string:item_name>/edit')
