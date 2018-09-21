@@ -1,0 +1,29 @@
+/* 
+// Navbar styles
+*/
+
+.item_catalog_nav{
+    background: #001C43;
+    height: 4em;
+}
+
+#item_catalog_brand{
+    color: white;
+    font-weight: bold;
+    font-size: 3em;
+}
+
+.navbar-header{
+    padding-left: 15%;
+}
+
+#bs-example-navbar-collapse-1{
+    padding-right: 15%;
+}
+
+.item_catalog_login_button{
+    background: #F33D00;
+    color: white;
+    border: none;
+    padding: .5em 2em;
+}

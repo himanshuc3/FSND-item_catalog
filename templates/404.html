@@ -1,0 +1,19 @@
+{% extends "bootstrap/base.html" %}
+{% block title %} 
+    Item Catalog - 404
+{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='404.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="outer_container">
+    {% include 'nav.html' %}
+    <div class="404"> 
+        <h1>404</h1>
+        <h3>Page not found</h3>
+    </div>
+{% endblock %}
+        

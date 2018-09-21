@@ -10,9 +10,17 @@ class Items(Base):
     __tablename__ = 'items'
 
     id= Column(Integer, primary_key=True)
-    title = Column(String(250), nullable= False)
-    description = Column(String(300), nullable=False)
-    category = Column(String(250), nullable=False)
+    title = Column(String(64), nullable= False)
+    description = Column(String(250), nullable=False)
+    category = Column(String(64), nullable=False)
+
+class User(Base):
+    __tablename__ = 'users'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(64))
+    email = Column(String(64))
+    password = Column(String(64))
 
 
 engine = create_engine(

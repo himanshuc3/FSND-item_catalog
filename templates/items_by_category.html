@@ -1,8 +1,39 @@
-<html>
-    <head>
+{% extends "bootstrap/base.html" %}
+{% block title %} 
+    Item Catalog - Homepage
+{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+{% endblock %}
 
-    </head>
-    <body>
-        <h1>Items by category</h1>
-    </body>
-</html>
+{% block body %}
+<div class="outer_container">
+    {% include 'nav.html' %}
+    <div class="main_catalog">
+        <div class="left">
+            <h2 class="catalog_heading">Categories</h2>
+            <ul>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer')}}">Soccer</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball')}}">Basketball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball')}}">Baseball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'frisbee')}}">Frisbee</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowbaording')}}">Snowboarding</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'rock_climbing')}}">Rock Climbing</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'foosball')}}">Foosball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'skating')}}">Skating</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'hockey')}}">Hockey</a></li>
+            </ul>
+        </div>
+        <div class="right">
+                <h2 class="catalog_heading">{{ category_name }}</h2>
+                <!-- Fetching data in python and display items here -->
+                <ul>
+                    <li>Item one</li>
+                    <li>Item two</li>
+                </ul>
+            </div>
+    </div>
+{% endblock %}
+        

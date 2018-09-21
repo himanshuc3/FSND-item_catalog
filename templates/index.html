@@ -5,38 +5,29 @@
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
 {% endblock %}
 
 {% block body %}
 <div class="outer_container">
-    <nav class="navbar navbar-default item_catalog_nav">
-            <div class="container-fluid">
-            <div class="navbar-header">
-                <a class="navbar-brand" id="item_catalog_brand" href="#">Catalog App</a>
-            </div>
-        
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <form class="navbar-form navbar-right">
-                <button type="submit" class="btn btn-default item_catalog_login_button">Login</button>
-                </form>
-            </div><!-- /.navbar-collapse -->
-            </div><!-- /.container-fluid -->
-    </nav>
+    {% include 'nav.html' %}
     <div class="main_catalog">
         <div class="left">
-            <h2>Catalog</h2>
+            <h2 class="catalog_heading">Categories</h2>
             <ul>
-                <li>Soccer</li>
-                <li>Basketball</li>
-                <li>Baseball</li>
-                <li>Frisbee</li>
-                <li>Snowboarding</li>
-                <li>Foosball</li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer', _external=True)}}">Soccer</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball', _external=True)}}">Basketball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball', _external=True)}}">Baseball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'frisbee', _external=True)}}">Frisbee</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowbaording', _external=True)}}">Snowboarding</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'rock_climbing', _external=True)}}">Rock Climbing</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'foosball', _external=True)}}">Foosball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'skating', _external=True)}}">Skating</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'hockey', _external=True)}}">Hockey</a></li>
             </ul>
         </div>
         <div class="right">
-                <h2>Latest Items</h2>
+                <h2 class="catalog_heading">Latest Items</h2>
                 <ul>
                     <li>Stick (Hockey)</li>
                     <li>Goggles (Snowboarding)</li>
