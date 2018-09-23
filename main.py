@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, url_for, flash, redirect, Blueprint, jsonify, session as login_session
+
 #For applying bootstrap integration into flask jinja templates
 from flask_bootstrap import Bootstrap
 
@@ -7,7 +8,7 @@ from flask_login import LoginManager, login_required, login_user, logout_user
 
 #For CRUD operations from database
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from database_setup import Base, Items, User
 from flask_dance.contrib.google import make_google_blueprint, google
 import random,string
@@ -22,10 +23,15 @@ app = Flask(__name__)
 bootstrap = Bootstrap(app)
 
 #Congiguration for quering database
+#Also make session scoped
 engine = create_engine('sqlite:///item_catalog.db')
 Base.metadata.bind = engine
-DBSession = sessionmaker(bind=engine)
-db_session = DBSession()
+db_session = scoped_session(sessionmaker(bind=engine))
+
+#Removes session after every thread aka function view (routes)
+@app.teardown_request
+def remove_session(ex=None):
+    db_session.remove()
 
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
@@ -64,26 +70,25 @@ def Login():
     # state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
     # login_session['state'] = state
     # return 'State is %s' % login_session['state']
-    with DBSession() as db_session:
-        login_form = LoginForm()
-        registration_form = RegistrationForm()
-        if login_form.validate_on_submit():
-            user = db_session.query(User).filter_by(email = login_form.email.data).first()
-            if user is not None and user.verify_password(login_form.password.data):
-                login_user(user, login_form.remember_me.data)
-                redirect(url_for('Home'))
-            flash('Invalid email or password')
-        if registration_form.validate_on_submit():
-            user = db_session.query(User).filter_by(email = registration_form.email.data).first()
-            if user is None:
-                new_user = User(name = registration_form.name.data, email = registration_form.email.data)
-                new_user.password = registration_form.password.data
-                db_session.add(new_user)
-                db_session.commit()
-                flash('Registration successful. Please Log in with the credentials')
-                redirect(url_for('Login'))
-            flash('User already exists. Please log in')
-        return render_template('login.html', form=login_form, registration_form = registration_form)
+    login_form = LoginForm()
+    registration_form = RegistrationForm()
+    if login_form.validate_on_submit():
+        user = db_session.query(User).filter_by(email = login_form.email.data).first()
+        if user is not None and user.verify_password(login_form.password.data):
+            login_user(user, login_form.remember_me.data)
+            redirect(url_for('Home'))
+        flash('Invalid email or password')
+    elif registration_form.validate_on_submit():
+        user = db_session.query(User).filter_by(email = registration_form.email.data).first()
+        if user is None:
+            new_user = User(name = registration_form.name.data, email = registration_form.email.data)
+            new_user.password = registration_form.password.data
+            db_session.add(new_user)
+            db_session.commit()
+            flash('Registration successful. Please Log in with the credentials')
+            redirect(url_for('Login'))
+        flash('User already exists. Please log in')
+    return render_template('login.html', form=login_form, registration_form = registration_form)
 
 #Logging out
 @app.route('/logout')

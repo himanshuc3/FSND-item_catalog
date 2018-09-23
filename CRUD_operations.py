@@ -13,3 +13,9 @@ for item in items:
     print(item.description)
     print(item.category)
     print("-----")
+
+users = session.query(User).all()
+for user in users:
+    print(user.name)
+    print(user.email)
+    print("-----")
