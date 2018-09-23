@@ -33,6 +33,7 @@ class User(UserMixin, Base):
     
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
+    
 
 
 engine = create_engine(

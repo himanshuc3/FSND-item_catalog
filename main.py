@@ -163,6 +163,13 @@ def DeleteItem(category_name,item_name):
         return render_template('delete_item.html', delete_form = form)
     return redirect(url_for('Home'))
 
+#Catalog Endpoint
+@app.route('/catalog')
+def CatalogEndpoint():
+    items = db_session.query(Items).all()
+    item_dict = [ {'category': item.category, 'title': item.title, 'description':item.description, 'id': item.id} for item in items]
+    return jsonify(item_dict)
+
 # Route doesn't exist
 @app.errorhandler(404)
 def page_not_found(e):
