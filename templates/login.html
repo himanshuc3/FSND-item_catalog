@@ -6,12 +6,18 @@
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='login.css') }}">
 {% endblock %}
 
 {% block body %}
 <div class="outer_container">
     {% include 'nav.html' %}
-    {{ wtf.quick_form(form) }}
-    <p><a href="{{url_for('Register')}}">Register</a></p>
+    <div class="form_container">
+        <h2>Login</h2>
+        <div class="login_form">
+            {{ wtf.quick_form(form) }}
+        </div>
+    <p><a href="{{url_for('Register')}}">New User? Register here.</a></p>
+    </div>
 {% endblock %}
         

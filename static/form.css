@@ -1,0 +1,19 @@
+.outer_container{
+    width:100vw;
+    height: 100vh;
+    background: #DDDDDD;
+}
+.form_container{
+    width: 70%;
+    height: 50vh;
+    margin: 2em auto;
+}
+
+.form_container h2{
+    text-align: center;
+}
+
+.form{
+    width:70%;
+    margin: 2em auto;
+}

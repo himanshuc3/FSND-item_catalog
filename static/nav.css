@@ -22,8 +22,20 @@
 }
 
 .item_catalog_login_button{
-    background: #F33D00;
-    color: white;
     border: none;
-    padding: .5em 2em;
+    width: 8em;
+    margin-right: 15%;
 }
+
+.item_catalog_login_button li{
+    background: #F33D00;
+    padding: 0 1em;
+    border-radius: 10px;
+    text-align: center;
+    color: white;
+}
+
+.login_color{
+    color: white !important;
+}
+

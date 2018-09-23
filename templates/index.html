@@ -13,8 +13,8 @@
     {% include 'nav.html' %}
     <div class="main_catalog">
         <div class="left">
-            <h2 class="catalog_heading">Categories</h2>
-            <ul>
+            <h2 class="catalog_heading heading_1">Categories</h2>
+            <ul class="categories_list">
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer')}}">Soccer</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball')}}">Basketball</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball')}}">Baseball</a></li>
@@ -28,12 +28,13 @@
         </div>
         <div class="right">
             {% if current_user.is_authenticated %}
-                <p><a href="{{url_for('NewItem')}}">Add new Item</a></p>
+                <p><a href="{{url_for('NewItem')}}" class="add_new_item">Add new Item</a></p>
             {% endif %}
-                <h2 class="catalog_heading">Latest Items</h2>
-                <ul>
-                    <li>Stick (Hockey)</li>
-                    <li>Goggles (Snowboarding)</li>
+                <h2 class="catalog_heading heading_2" class="add_new_item">Latest Items</h2>
+                <ul class="latest_items_list">
+                    {% for item in latest_items %}
+                    <li><a href={{url_for('SpecificItem', category_name = item.category, item_name=item.title)}}>{{item.title}}</a><span class="category_subtle"> ({{item.category}})</span></li>
+                    {% endfor %}
                 </ul>
             </div>
     </div>

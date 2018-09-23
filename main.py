@@ -53,9 +53,12 @@ def load_user(user_id):
 # app.register_blueprint(google_blueprint, url_prefix="/google_login")
 
 # Default home route
-@app.route('/')
+@app.route('/', methods=['GET','POST'])
 def Home():
-    return render_template('index.html')
+    latest_items = db_session.query(Items).order_by(Items.id.desc()).limit(5)
+    if request.method == 'POST':
+        pass
+    return render_template('index.html', latest_items = latest_items)
 
 # @app.route('/google')
 # def google_login():
@@ -67,9 +70,6 @@ def Home():
 # Login route
 @app.route('/login', methods=['GET','POST'])
 def Login():
-    # state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
-    # login_session['state'] = state
-    # return 'State is %s' % login_session['state']
     login_form = LoginForm()
     if login_form.submit1.data and login_form.validate_on_submit():
         user = db_session.query(User).filter_by(email = login_form.email.data).first()

@@ -5,6 +5,7 @@
 {% block styles %}
 {{super()}}
 <link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='item_page.css') }}">
 {% endblock %}
 
 {% block body %}
@@ -12,14 +13,14 @@
     {% include 'nav.html' %}
     <div class="item_container">
         <h1>{{item.title}}</h1>
-        <p>{{item.description}}</p>
+        <p class="desc">Description: {{item.description}}</p>
+        <p>
+            {% if current_user.is_authenticated %}
+            <a href={{url_for('EditItem',category_name=item.category, item_name=item.title)}}>Edit</a> |
+            <a href={{url_for('DeleteItem',category_name=item.category,item_name=item.title)}}>Delete</a>
+            {% endif %}
+        </p>
     </div>
-    <p>
-        {% if current_user.is_authenticated %}
-        <a href={{url_for('EditItem',category_name=item.category, item_name=item.title)}}>Edit</a>|
-        <a href={{url_for('DeleteItem',category_name=item.category,item_name=item.title)}}>Delete</a>
-        {% endif %}
-    </p>
     </div>
 {% endblock %}
         

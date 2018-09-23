@@ -13,8 +13,8 @@
     {% include 'nav.html' %}
     <div class="main_catalog">
         <div class="left">
-            <h2 class="catalog_heading">Categories</h2>
-            <ul>
+            <h2 class="catalog_heading heading_1">Categories</h2>
+            <ul class="categories_list">
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer')}}">Soccer</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball')}}">Basketball</a></li>
                 <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball')}}">Baseball</a></li>
