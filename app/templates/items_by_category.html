@@ -31,7 +31,8 @@
                 <!-- Fetching data in python and display items here -->
                 <ul>
                 {% for item in items %}
-                    <li><a href="{{ url_for('SpecificItem', category_name= category_name, item_name = item.title) }} ">{{item.title}}</a></li>
+                    <!-- <li><a href="{{ url_for('SpecificItem', category_name= category_name, item_name = item.title) }} ">{{item.title}}</a></li> -->
+                    <li>{{ item.title }}</li>
                 </ul>
                 {% endfor %}
             </div>

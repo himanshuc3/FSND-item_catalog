@@ -1,0 +1,16 @@
+{% import "bootstrap/wtf.html" as wtf %}
+{% extends "bootstrap/base.html" %}
+{% block title %} 
+    Item Catalog - Add item
+{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="outer_container">
+    {% include 'nav.html' %}
+    {{ wtf.quick_form(new_item_form) }}
+{% endblock %}
+        
