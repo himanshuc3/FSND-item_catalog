@@ -4,7 +4,6 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import create_engine
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
-from main import login_manager
 
 Base = declarative_base()
 
@@ -34,10 +33,6 @@ class User(UserMixin, Base):
     
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
-
-    # @login_manager.user_loader
-    # def load_user(user_id):
-    #     return User.query.get(int(user_id))
 
 
 engine = create_engine(

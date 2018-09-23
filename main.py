@@ -3,7 +3,7 @@ from flask import Flask, render_template, request, url_for, flash, redirect, Blu
 from flask_bootstrap import Bootstrap
 
 #For login management
-from flask_login import LoginManager, login_required, login_user
+from flask_login import LoginManager, login_required, login_user, logout_user
 
 #For CRUD operations from database
 from sqlalchemy import create_engine
@@ -13,7 +13,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 import random,string
 from form import LoginForm, RegistrationForm, NewItemForm, DeleteForm
 import os
-from config import data
+from config import config
 
 #Flask instance created
 app = Flask(__name__)
@@ -27,38 +27,36 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 db_session = DBSession()
 
-login_manager = LoginManager()
-login_manager.login_view = 'auth.login'
-login_manager.init_app(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
+
+@login_manager.user_loader
+def load_user(user_id):
+    return db_session.query(User).get(int(user_id))
 
 # Configuring google oauth blueprint
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' #Configure to accept http oauth request instead of https
-google_blueprint = make_google_blueprint(
-    client_id = data['google_client_id'],
-    client_secret = data['google_client_secret'],
-    scope=[
-        "https://www.googleapis.com/auth/plus.me",
-        "https://www.googleapis.com/auth/userinfo.email"
-    ]
-)
-app.register_blueprint(google_blueprint, url_prefix="/google_login")
-
-auth = Blueprint('auth', __name__)
-app.register_blueprint(auth, url_prefix="/auth")
+# os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1' #Configure to accept http oauth request instead of https
+# google_blueprint = make_google_blueprint(
+#     client_id = data['google_client_id'],
+#     client_secret = data['google_client_secret'],
+#     scope=[
+#         "https://www.googleapis.com/auth/plus.me",
+#         "https://www.googleapis.com/auth/userinfo.email"
+#     ]
+# )
+# app.register_blueprint(google_blueprint, url_prefix="/google_login")
 
 # Default home route
 @app.route('/')
 def Home():
-    if google.authorized:
-        return render_template('index.html', logged_in=True)
-    return render_template('index.html', logged_in=False)
+    return render_template('index.html')
 
-@app.route('/google')
-def google_login():
-    if not google.authorized:
-        return redirect(url_for('google.login'))
-    # return redirect(url_for('Home'))
-    return '<h1>Ok. google authorized</h1>'
+# @app.route('/google')
+# def google_login():
+#     if not google.authorized:
+#         return redirect(url_for('google.login'))
+#     # return redirect(url_for('Home'))
+#     return '<h1>Ok. google authorized</h1>'
 
 # Login route
 @app.route('/login', methods=['GET','POST'])
@@ -66,25 +64,33 @@ def Login():
     # state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
     # login_session['state'] = state
     # return 'State is %s' % login_session['state']
-    login_form = LoginForm()
-    registration_form = RegistrationForm()
-    if login_form.validate_on_submit():
-        user = db_session.query(User).filter_by(email = login_form.email.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            login_user(user, form.remember_me.data)
-            redirect(url_for('Home'))
-        flash('Invalid email or password')
-    if registration_form.validate_on_submit():
-        user = db_session.query(User).filter_by(email = registration_form.email.data).first()
-        if user is None:
-            new_user = User(name = registration_form.name.data, email = registration_form.email.data)
-            new_user.password = registration_form.password.data
-            db_session.add(new_user)
-            db_session.commit()
-            flash('Registration successful. Please Log in with the credentials')
-            redirect(url_for('Login'))
-        flash('User already exists. Please log in')
-    return render_template('login.html', form=login_form, registration_form = registration_form)
+    with DBSession() as db_session:
+        login_form = LoginForm()
+        registration_form = RegistrationForm()
+        if login_form.validate_on_submit():
+            user = db_session.query(User).filter_by(email = login_form.email.data).first()
+            if user is not None and user.verify_password(login_form.password.data):
+                login_user(user, login_form.remember_me.data)
+                redirect(url_for('Home'))
+            flash('Invalid email or password')
+        if registration_form.validate_on_submit():
+            user = db_session.query(User).filter_by(email = registration_form.email.data).first()
+            if user is None:
+                new_user = User(name = registration_form.name.data, email = registration_form.email.data)
+                new_user.password = registration_form.password.data
+                db_session.add(new_user)
+                db_session.commit()
+                flash('Registration successful. Please Log in with the credentials')
+                redirect(url_for('Login'))
+            flash('User already exists. Please log in')
+        return render_template('login.html', form=login_form, registration_form = registration_form)
+
+#Logging out
+@app.route('/logout')
+def Logout():
+    logout_user()
+    flash('You have been logged out')
+    return redirect(url_for('Login'))
 
 # Show all items when clicked on the catalog
 @app.route('/catalog/<string:category_name>/items')
@@ -139,8 +145,8 @@ def page_not_found(e):
 
 
 if __name__ == '__main__':
-    app.secret_key = data['secret_key']
+    app.secret_key = config['secret_key']
     #Enables reloader and debugger
     app.debug = True
     #Starting flask application at localhost:5000
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=4000)
