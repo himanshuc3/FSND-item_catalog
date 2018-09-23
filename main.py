@@ -71,14 +71,20 @@ def Login():
     # login_session['state'] = state
     # return 'State is %s' % login_session['state']
     login_form = LoginForm()
-    registration_form = RegistrationForm()
-    if login_form.validate_on_submit():
+    if login_form.submit1.data and login_form.validate_on_submit():
         user = db_session.query(User).filter_by(email = login_form.email.data).first()
         if user is not None and user.verify_password(login_form.password.data):
             login_user(user, login_form.remember_me.data)
-            redirect(url_for('Home'))
+            login_form.email.data = ''
+            login_form.password.data = ''
+            return redirect(url_for('Home'))
         flash('Invalid email or password')
-    elif registration_form.validate_on_submit():
+    return render_template('login.html', form=login_form)
+
+@app.route('/register', methods=['GET','POST'])
+def Register():
+    registration_form = RegistrationForm()
+    if registration_form.submit2.data and registration_form.validate_on_submit():
         user = db_session.query(User).filter_by(email = registration_form.email.data).first()
         if user is None:
             new_user = User(name = registration_form.name.data, email = registration_form.email.data)
@@ -86,16 +92,18 @@ def Login():
             db_session.add(new_user)
             db_session.commit()
             flash('Registration successful. Please Log in with the credentials')
-            redirect(url_for('Login'))
+            return redirect(url_for('Home'))
         flash('User already exists. Please log in')
-    return render_template('login.html', form=login_form, registration_form = registration_form)
+    return render_template('register.html',form = registration_form)
+
 
 #Logging out
 @app.route('/logout')
+@login_required
 def Logout():
     logout_user()
     flash('You have been logged out')
-    return redirect(url_for('Login'))
+    return redirect(url_for('Home'))
 
 # Show all items when clicked on the catalog
 @app.route('/catalog/<string:category_name>/items')
@@ -122,18 +130,30 @@ def NewItem():
     return render_template('new_item.html', new_item_form = new_item_form)
 
 # Editing item
-@app.route('/catalog/<string:item_name>/edit')
-def EditItem(item_name):
-    item_to_edit = db_session.query(Items).filter_by(title=item_name).first()
+@app.route('/catalog/<string:category_name>/<string:item_name>/edit', methods=['GET','POST'])
+@login_required
+def EditItem(category_name,item_name):
+    item_to_edit = db_session.query(Items).filter_by(title=item_name,category=category_name).first()
     if item_to_edit :
-        render_template('edit_item.html', item = item_to_edit )
+        if request.method == 'POST':
+            title = request.form.get('title')
+            description = request.form.get('description')
+            category = request.form.get('category')
+            item_to_edit.title = title
+            item_to_edit.description = description
+            category = str(category)
+            db_session.add(item_to_edit)
+            db_session.commit()
+            return redirect(url_for('Home'))    
+        return render_template('edit_item.html', item = item_to_edit )
     return redirect(url_for('Home'))
 
 # Deleting item route
-@app.route('/catalog/<string:item_name>/delete', methods=['GET','POST'])
-def DeleteItem(item_name):
+@login_required
+@app.route('/catalog/<string:category_name>/<string:item_name>/delete', methods=['GET','POST'])
+def DeleteItem(category_name,item_name):
     # Checking if item exists in table
-    item_to_delete = db_session.query(Items).filter_by(title=item_name).first()
+    item_to_delete = db_session.query(Items).filter_by(title=item_name,category=category_name).first()
     form = DeleteForm()
     if item_to_delete :
         if request.method == 'POST' :

@@ -1,0 +1,31 @@
+{% extends "bootstrap/base.html" %}
+{% block title %} 
+    Item Catalog - Add item
+{% endblock %}
+{% block styles %}
+{{super()}}
+<link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
+{% endblock %}
+
+{% block body %}
+<div class="outer_container">
+    {% include 'nav.html' %}
+    <form method="post">
+        <input type="text" value={{item.title}} name="title">
+        <input type="text" value={{item.description}} name="description">
+        <select selected={{item.category}} name="category">
+            <option value="soccer">Soccer</option>
+            <option value="basketball">Basketball</option>
+            <option value="baseball">Baseball</option>
+            <option value="frisbee">Frisbee</option>
+            <option value="snowboarding">Snowboarding</option>
+            <option value="rock_climbing">Rock Climbing</option>
+            <option value="foosball">Foosball</option>
+            <option value="skating">Skating</option>
+            <option value="hockey">Hockey</option>
+        </select>
+        <button type="submit">Save</button>
+    </form>
+
+{% endblock %}
+        

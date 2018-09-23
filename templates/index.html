@@ -15,18 +15,21 @@
         <div class="left">
             <h2 class="catalog_heading">Categories</h2>
             <ul>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer', _external=True)}}">Soccer</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball', _external=True)}}">Basketball</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball', _external=True)}}">Baseball</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'frisbee', _external=True)}}">Frisbee</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowboarding', _external=True)}}">Snowboarding</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'rock_climbing', _external=True)}}">Rock Climbing</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'foosball', _external=True)}}">Foosball</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'skating', _external=True)}}">Skating</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'hockey', _external=True)}}">Hockey</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer')}}">Soccer</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball')}}">Basketball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball')}}">Baseball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'frisbee')}}">Frisbee</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowboarding')}}">Snowboarding</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'rock_climbing')}}">Rock Climbing</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'foosball')}}">Foosball</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'skating')}}">Skating</a></li>
+                <li><a href="{{ url_for('ItemsByCategory', category_name = 'hockey')}}">Hockey</a></li>
             </ul>
         </div>
         <div class="right">
+            {% if current_user.is_authenticated %}
+                <p><a href="{{url_for('NewItem')}}">Add new Item</a></p>
+            {% endif %}
                 <h2 class="catalog_heading">Latest Items</h2>
                 <ul>
                     <li>Stick (Hockey)</li>

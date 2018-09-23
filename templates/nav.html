@@ -9,9 +9,9 @@
         <form class="navbar-form navbar-right">
         <button type="submit" class="btn btn-default item_catalog_login_button" data-toggle="modal" data-target="#myModal">
             {% if current_user.is_authenticated %}
-            <a href=" {{ url_for("Login") }}">Log in</a>
+            <a href=" {{ url_for('Logout') }}">Log out</a>
             {% else %}
-            <a href=" {{ url_for("Logout") }}">Log out</a>
+            <a href=" {{ url_for('Login') }}">Log in</a>
             {% endif %}
             </button>
         </form>
