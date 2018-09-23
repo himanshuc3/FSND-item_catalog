@@ -15,25 +15,25 @@
         <div class="left">
             <h2 class="catalog_heading heading_1">Categories</h2>
             <ul class="categories_list">
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'soccer')}}">Soccer</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'basketball')}}">Basketball</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'baseball')}}">Baseball</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'frisbee')}}">Frisbee</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'snowboarding')}}">Snowboarding</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'rock_climbing')}}">Rock Climbing</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'foosball')}}">Foosball</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'skating')}}">Skating</a></li>
-                <li><a href="{{ url_for('ItemsByCategory', category_name = 'hockey')}}">Hockey</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'soccer')}}>Soccer</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'basketball')}}>Basketball</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'baseball')}}>Baseball</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'frisbee')}}>Frisbee</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'snowboarding')}}>Snowboarding</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'rock_climbing')}}>Rock Climbing</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'foosball')}}>Foosball</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'skating')}}>Skating</a></li>
+                <li><a href={{ url_for('ItemsByCategory', category_name = 'hockey')}}>Hockey</a></li>
             </ul>
         </div>
         <div class="right">
                 <h2 class="catalog_heading">{{ category_name }}</h2>
                 <!-- Fetching data in python and display items here -->
-                <ul>
+                <ul class="category_items">
                 {% for item in items %}
                     <li><a href={{ url_for('SpecificItem',category_name=category_name, item_name=item.title) }}>{{ item.title }}</a></li>
-                </ul>
                 {% endfor %}
+                </ul>
             </div>
     </div>
 {% endblock %}

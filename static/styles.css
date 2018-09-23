@@ -82,3 +82,9 @@ a:hover{
     color: #A1A4A7;
     font-style: italic;
 }
+
+.category_items li{
+    font-size: 1.3em;
+    padding-bottom:.5em;
+    margin-left: -2em;
+}
