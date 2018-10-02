@@ -18,6 +18,8 @@
             {{ wtf.quick_form(form) }}
         </div>
     <p><a href="{{url_for('Register')}}">New User? Register here.</a></p>
+    <h2>OR</h2>
+    <h3><a href={{url_for('GoogleLogin')}}>Login with oauth</a></h3>
     </div>
 {% endblock %}
         

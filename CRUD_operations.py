@@ -12,6 +12,7 @@ for item in items:
     print(item.title)
     print(item.description)
     print(item.category)
+    print(item.user_id)
     print("-----")
 
 users = session.query(User).all()

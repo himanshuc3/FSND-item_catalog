@@ -7,22 +7,15 @@ from flask_login import UserMixin
 
 Base = declarative_base()
 
-class Items(Base):
-    __tablename__ = 'items'
-
-    id = Column(Integer, primary_key=True)
-    title = Column(String(64), nullable=False)
-    description = Column(String(250), nullable=False)
-    category = Column(String(64), nullable=False)
-
 class User(UserMixin, Base):
     __tablename__ = 'users'
 
     id = Column(Integer, primary_key=True)
     name = Column(String(64))
     email = Column(String(64))
-    password_hash = Column(String(128))
+    # password_hash = Column(String(128))
 
+    #For local login system.
     @property
     def password(self):
         raise AttributeError("password is not a readable attribute")
@@ -34,6 +27,15 @@ class User(UserMixin, Base):
     def verify_password(self, password):
         return check_password_hash(self.password_hash, password)
     
+class Items(Base):
+    __tablename__ = 'items'
+
+    id = Column(Integer, primary_key=True)
+    title = Column(String(64), nullable=False)
+    description = Column(String(250), nullable=False)
+    category = Column(String(64), nullable=False)
+    user_id = Column(Integer, ForeignKey('users.id'))
+    user = relationship(User)
 
 
 engine = create_engine(
