@@ -9,8 +9,4 @@ A minimalistic item catalog made using Flask as a part of the Full stack Nanodeg
 4. Run the development server by ```python3 main.py```. 
 Note: Server is located on localhost:4000.
 
-# Current Checklist
 
-  1. [ ] Rearranging Directory structure
-  2. [ ] Database Migration
-  3. [ ] SMTP
