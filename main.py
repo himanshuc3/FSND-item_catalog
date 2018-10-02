@@ -35,7 +35,7 @@ bootstrap = Bootstrap(app)
 api = Api(app)
 
 CLIENT_ID = json.loads(
-    open('client_secrets.json','r').read())['web']['client_id']
+    open('client_secrets.json', 'r').read())['web']['client_id']
 
 # Congiguration for quering database
 # Also make session scoped
@@ -94,11 +94,16 @@ def getUserID(email):
     except:
         return None
 
+
 # Default home route
 @app.route('/', methods=['GET'])
 def Home():
     latest_items = db_session.query(Items).order_by(Items.id.desc()).limit(5)
-    return render_template('index.html', latest_items=latest_items, login_session=login_session)
+    return render_template(
+                        'index.html',
+                        latest_items=latest_items,
+                        login_session=login_session
+                        )
 
 
 # Login route
@@ -118,7 +123,11 @@ def Login():
             login_form.password.data = ''
             return redirect(url_for('Home'))
         flash('Invalid email or password')
-    return render_template('login.html', form=login_form, login_session=login_session)
+    return render_template(
+                        'login.html',
+                        form=login_form,
+                        login_session=login_session
+                        )
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -173,8 +182,8 @@ def gconnect():
     stored_access_token = login_session.get('access_token')
     stored_gplus_id = login_session.get('gplus_id')
     if stored_access_token is not None and gplus_id == stored_gplus_id:
-        response = make_response(json.dumps('Current user is already connected.'),
-                                 200)
+        response = make_response(
+                    json.dumps('Current user is already connected.'), 200)
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -193,21 +202,11 @@ def gconnect():
     login_session['picture'] = data['picture']
     login_session['email'] = data['email']
 
-     # see if user exists, if it doesn't make a new one
+    # see if user exists, if it doesn't make a new one
     user_id = getUserID(login_session['email'])
     if not user_id:
         user_id = createUser(login_session)
     login_session['user_id'] = user_id
-
-    # output = ''
-    # output += '<h1>Welcome, '
-    # output += login_session['username']
-    # output += '!</h1>'
-    # output += '<img src="'
-    # output += login_session['picture']
-    # output += ' " style = "width: 300px; height: 300px;border-radius: 150px;-webkit-border-radius: 150px;-moz-border-radius: 150px;"> '
-    # flash("you are now logged in as %s" % login_session['username'])
-    # print("done!")
     return redirect(url_for('Home'))
 
 
@@ -216,13 +215,15 @@ def gdisconnect():
     access_token = login_session.get('access_token')
     if access_token is None:
         print('Access Token is None')
-        response = make_response(json.dumps('Current user not connected.'), 401)
+        response = make_response(
+                    json.dumps('Current user not connected.'), 401)
         response.headers['Content-Type'] = 'application/json'
         return response
     print('In gdisconnect access token is %s', access_token)
     print('User name is: ')
     print(login_session['username'])
-    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % login_session['access_token']
+    url = 'https://accounts.google.com/o/oauth2/revoke?token=%s' % \
+            login_session['access_token']
     h = httplib2.Http()
     result = h.request(url, 'GET')[0]
     print('result is ')
@@ -233,12 +234,10 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
-        # response = make_response(json.dumps('Successfully disconnected.'), 200)
-        # response.headers['Content-Type'] = 'application/json'
-        # return response
         return redirect(url_for('Home'))
     else:
-        response = make_response(json.dumps('Failed to revoke token for given user.', 400))
+        response = make_response(
+                    json.dumps('Failed to revoke token for given user.', 400))
         response.headers['Content-Type'] = 'application/json'
         return response
 
@@ -246,7 +245,8 @@ def gdisconnect():
 @app.route('/register', methods=['GET', 'POST'])
 def Register():
     registration_form = RegistrationForm()
-    if registration_form.submit2.data and registration_form.validate_on_submit():
+    if registration_form.submit2.data and \
+        registration_form.validate_on_submit():
         user = (
             db_session
             .query(User)
@@ -262,26 +262,28 @@ def Register():
             db_session.add(new_user)
             db_session.commit()
             flash('Registration successful. \
-                Please Log in with the credentials'
-                )
+                Please Log in with the credentials')
             return redirect(url_for('Home'))
         flash('User already exists. Please log in')
     return render_template('register.html', form=registration_form)
 
+
 @app.route('/google_login')
 def GoogleLogin():
     # Create anti-forgery state token
-	state = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(32))
-	login_session['state'] = state
-	return render_template('google_login.html', STATE=state)
+    state = ''.join(
+            random.choice(string.ascii_uppercase + string.digits)
+            for x in range(32))
+    login_session['state'] = state
+    return render_template('google_login.html', STATE=state)
 
 # Logging out
-@app.route('/logout')
-@login_required
-def Logout():
-    logout_user()
-    flash('You have been logged out')
-    return redirect(url_for('Home'))
+# @app.route('/logout')
+# @login_required
+# def Logout():
+#     logout_user()
+#     flash('You have been logged out')
+#     return redirect(url_for('Home'))
 
 
 # Show all items when clicked on the catalog
@@ -311,14 +313,20 @@ def SpecificItem(category_name, item_name):
         .first()
     )
     print(item.title, item.description)
-    return render_template('item_page.html', item=item,login_session=login_session)
+    return render_template(
+            'item_page.html',
+            item=item,
+            login_session=login_session
+            )
 
 
 # Adding item route
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def NewItem():
     new_item_form = NewItemForm()
-    if request.method == 'POST' and new_item_form.validate_on_submit() and 'username' in login_session:
+    if request.method == 'POST' and \
+        new_item_form.validate_on_submit() and \
+        'username' in login_session:
         new_item = Items(
                     title=new_item_form.title.data,
                     description=new_item_form.description.data,
@@ -328,7 +336,11 @@ def NewItem():
         db_session.add(new_item)
         db_session.commit()
         return redirect(url_for('Home'))
-    return render_template('new_item.html', new_item_form=new_item_form,login_session=login_session)
+    return render_template(
+            'new_item.html',
+            new_item_form=new_item_form,
+            login_session=login_session
+            )
 
 
 # Editing item
@@ -345,7 +357,9 @@ def EditItem(category_name, item_name):
                 .first()
     )
     if item_to_edit:
-        if request.method == 'POST' and 'username' in login_session and item_to_edit.user_id == login_session['user_id']:
+        if request.method == 'POST' and \
+            'username' in login_session and \
+            item_to_edit.user_id == login_session['user_id']:
             title = request.form.get('title')
             description = request.form.get('description')
             category = request.form.get('category')
@@ -355,7 +369,11 @@ def EditItem(category_name, item_name):
             db_session.add(item_to_edit)
             db_session.commit()
             return redirect(url_for('Home'))
-        return render_template('edit_item.html', item=item_to_edit,login_session=login_session)
+        return render_template(
+                'edit_item.html',
+                item=item_to_edit,
+                login_session=login_session
+                )
     return redirect(url_for('Home'))
 
 
@@ -374,12 +392,18 @@ def DeleteItem(category_name, item_name):
                     .first()
     )
     form = DeleteForm()
-    if item_to_delete and 'username' in login_session and item_to_delete.user_id == login_session['user_id']:
+    if item_to_delete and \
+        'username' in login_session and \
+        item_to_delete.user_id == login_session['user_id']:
         if request.method == 'POST':
             db_session.delete(item_to_delete)
             db_session.commit()
             return redirect(url_for('Home'))
-        return render_template('delete_item.html', delete_form=form,login_session=login_session)
+        return render_template(
+                'delete_item.html',
+                delete_form=form,
+                login_session=login_session
+                )
     return redirect(url_for('Home'))
 
 
@@ -399,10 +423,17 @@ class Item(Resource):
 
 api.add_resource(Item, '/v1/random_catalog/json')
 
+
 @app.route('/v1/catalog/json')
 def allItemsJSON():
     items = db_session.query(Items).all()
-    item_dict = [{'id': i.id,'title':i.title,'description':i.description,'category':i.category} for i in items]
+    item_dict = [
+        {
+            'id': i.id,
+            'title': i.title,
+            'description': i.description,
+            'category': i.category
+        } for i in items]
     return jsonify(items=item_dict)
 
 
