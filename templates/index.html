@@ -27,7 +27,7 @@
             </ul>
         </div>
         <div class="right">
-            {% if current_user.is_authenticated %}
+            {% if login_session['username'] %}
                 <p><a href="{{url_for('NewItem')}}" class="add_new_item">Add new Item</a></p>
             {% endif %}
                 <h2 class="catalog_heading heading_2" class="add_new_item">Latest Items</h2>

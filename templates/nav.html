@@ -5,7 +5,7 @@
     </div>
         <ul class="nav navbar-nav navbar-right item_catalog_login_button">
             <li>
-                {% if current_user.is_authenticated %}
+                {% if login_session['username'] %}
                 <a href=" {{ url_for('gdisconnect') }}" class="login_color">Log out</a>
                 {% else %}
                 <a href=" {{ url_for('Login') }}" class="login_color">Log in</a>

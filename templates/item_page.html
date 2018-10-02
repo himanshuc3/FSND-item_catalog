@@ -15,7 +15,7 @@
         <h1>{{item.title}}</h1>
         <p class="desc">Description: {{item.description}}</p>
         <p>
-            {% if current_user.is_authenticated %}
+            {% if login_session['username'] and item.user_id == login_session['user_id'] %}
             <a href={{url_for('EditItem',category_name=item.category, item_name=item.title)}}>Edit</a> |
             <a href={{url_for('DeleteItem',category_name=item.category,item_name=item.title)}}>Delete</a>
             {% endif %}

@@ -1,7 +1,6 @@
 from flask import Flask, render_template, \
     request, url_for, flash, redirect, Blueprint, \
-    session as login_session, make_response
-
+    session as login_session, make_response, jsonify
 # For applying bootstrap integration into flask jinja templates
 from flask_bootstrap import Bootstrap
 
@@ -77,20 +76,20 @@ def load_user(user_id):
 def createUser(login_session):
     newUser = User(name=login_session['username'], email=login_session[
                    'email'])
-    session.add(newUser)
-    session.commit()
-    user = session.query(User).filter_by(email=login_session['email']).one()
+    db_session.add(newUser)
+    db_session.commit()
+    user = db_session.query(User).filter_by(email=login_session['email']).one()
     return user.id
 
 
 def getUserInfo(user_id):
-    user = session.query(User).filter_by(id=user_id).one()
+    user = db_session.query(User).filter_by(id=user_id).one()
     return user
 
 
 def getUserID(email):
     try:
-        user = session.query(User).filter_by(email=email).one()
+        user = db_session.query(User).filter_by(email=email).one()
         return user.id
     except:
         return None
@@ -99,7 +98,7 @@ def getUserID(email):
 @app.route('/', methods=['GET'])
 def Home():
     latest_items = db_session.query(Items).order_by(Items.id.desc()).limit(5)
-    return render_template('index.html', latest_items=latest_items)
+    return render_template('index.html', latest_items=latest_items, login_session=login_session)
 
 
 # Login route
@@ -119,7 +118,7 @@ def Login():
             login_form.password.data = ''
             return redirect(url_for('Home'))
         flash('Invalid email or password')
-    return render_template('login.html', form=login_form)
+    return render_template('login.html', form=login_form, login_session=login_session)
 
 
 @app.route('/gconnect', methods=['POST'])
@@ -297,7 +296,8 @@ def ItemsByCategory(category_name):
     return render_template(
                     'items_by_category.html',
                     category_name=category_name,
-                    items=items_by_category
+                    items=items_by_category,
+                    login_session=login_session
                     )
 
 
@@ -311,7 +311,7 @@ def SpecificItem(category_name, item_name):
         .first()
     )
     print(item.title, item.description)
-    return render_template('item_page.html', item=item)
+    return render_template('item_page.html', item=item,login_session=login_session)
 
 
 # Adding item route
@@ -322,12 +322,13 @@ def NewItem():
         new_item = Items(
                     title=new_item_form.title.data,
                     description=new_item_form.description.data,
-                    category=new_item_form.category.data
+                    category=new_item_form.category.data,
+                    user_id=login_session['user_id']
                     )
         db_session.add(new_item)
         db_session.commit()
         return redirect(url_for('Home'))
-    return render_template('new_item.html', new_item_form=new_item_form)
+    return render_template('new_item.html', new_item_form=new_item_form,login_session=login_session)
 
 
 # Editing item
@@ -354,7 +355,7 @@ def EditItem(category_name, item_name):
             db_session.add(item_to_edit)
             db_session.commit()
             return redirect(url_for('Home'))
-        return render_template('edit_item.html', item=item_to_edit)
+        return render_template('edit_item.html', item=item_to_edit,login_session=login_session)
     return redirect(url_for('Home'))
 
 
@@ -378,7 +379,7 @@ def DeleteItem(category_name, item_name):
             db_session.delete(item_to_delete)
             db_session.commit()
             return redirect(url_for('Home'))
-        return render_template('delete_item.html', delete_form=form)
+        return render_template('delete_item.html', delete_form=form,login_session=login_session)
     return redirect(url_for('Home'))
 
 
@@ -387,7 +388,7 @@ class Item(Resource):
     def get(self):
         count = db_session.query(Items).count()
         items = db_session.query(Items).all()
-        arbitrary_item = items[random.randint(0, count)]
+        arbitrary_item = items[random.randint(0, count-1)]
         return json.dumps({
                          'id': arbitrary_item.id,
                          'title': arbitrary_item.title,
@@ -396,7 +397,13 @@ class Item(Resource):
                          })
 
 
-api.add_resource(Item, '/catalog')
+api.add_resource(Item, '/v1/random_catalog/json')
+
+@app.route('/v1/catalog/json')
+def allItemsJSON():
+    items = db_session.query(Items).all()
+    item_dict = [{'id': i.id,'title':i.title,'description':i.description,'category':i.category} for i in items]
+    return jsonify(items=item_dict)
 
 
 # Route doesn't exist
