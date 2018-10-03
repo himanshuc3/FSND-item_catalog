@@ -234,6 +234,7 @@ def gdisconnect():
         del login_session['username']
         del login_session['email']
         del login_session['picture']
+        del login_session['user_id']
         return redirect(url_for('Home'))
     else:
         response = make_response(
@@ -360,10 +361,10 @@ def EditItem(category_name, item_name):
                 .filter_by(title=item_name, category=category_name)
                 .first()
     )
-    if item_to_edit:
-        if request.method == 'POST' and \
-            'username' in login_session and \
-            item_to_edit.user_id == login_session['user_id']:
+    if item_to_edit and \
+        'username' in login_session and \
+        item_to_edit.user_id == login_session['user_id']:
+        if request.method == 'POST':
             title = request.form.get('title')
             description = request.form.get('description')
             category = request.form.get('category')

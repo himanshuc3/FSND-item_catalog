@@ -19,4 +19,5 @@ users = session.query(User).all()
 for user in users:
     print(user.name)
     print(user.email)
+    print(user.id)
     print("-----")
