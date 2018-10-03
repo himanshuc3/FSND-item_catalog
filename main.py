@@ -323,6 +323,8 @@ def SpecificItem(category_name, item_name):
 # Adding item route
 @app.route('/catalog/new', methods=['GET', 'POST'])
 def NewItem():
+    if 'username' not in login_session:
+        return redirect(url_for('Home'))
     new_item_form = NewItemForm()
     if request.method == 'POST' and \
         new_item_form.validate_on_submit() and \
@@ -350,6 +352,8 @@ def NewItem():
     )
 # @login_required
 def EditItem(category_name, item_name):
+    if 'username' not in login_session:
+        redirect(url_for('Home'))
     item_to_edit = (
                 db_session
                 .query(Items)
@@ -384,6 +388,8 @@ def EditItem(category_name, item_name):
     methods=['GET', 'POST']
     )
 def DeleteItem(category_name, item_name):
+    if 'username' not in login_session:
+        return redirect(url_for('Home'))
     # Checking if item exists in table
     item_to_delete = (
                     db_session
