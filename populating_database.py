@@ -1,5 +1,6 @@
 # Purely for populating first few entries of database
 
+# Importing and connecting to database.
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Items, User
