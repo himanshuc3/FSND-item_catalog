@@ -1,3 +1,4 @@
+# Flask-sqlalchemy to be used instead of sqlalchemy
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from database_setup import Base, Items, User
